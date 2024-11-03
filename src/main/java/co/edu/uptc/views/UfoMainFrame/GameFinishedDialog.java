@@ -1,17 +1,21 @@
-package co.edu.uptc.views.OvniMainFrame;
+package co.edu.uptc.views.UfoMainFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import co.edu.uptc.utilities.DesignButton;
 import co.edu.uptc.views.GlobalView;
+import lombok.Getter;
 
 import java.awt.*;
 
+@Getter
 public class GameFinishedDialog extends JDialog {
 
     private JPanel BackgroundPanel;
     private JLabel titLabel;
+    private JLabel ovnisLabel;
+    private JTextField ovnisCount; 
     private DesignButton playButton;
     private DesignButton menuButton;
 
@@ -23,6 +27,7 @@ public class GameFinishedDialog extends JDialog {
         setLocationRelativeTo(owner);
         initBackgroundPanel();
         initTitleLabel();
+        initMessageField();
         initButtons();
         setVisible(true);
     }
@@ -40,6 +45,36 @@ public class GameFinishedDialog extends JDialog {
         titLabel.setForeground(GlobalView.TITLE_TEXT);
         titLabel.setBorder(new EmptyBorder(80, 0, 5, 0));
         BackgroundPanel.add(titLabel, BorderLayout.NORTH);
+    }
+
+    public void initMessageField() {
+        JPanel messagePanel = new JPanel();
+        messagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+
+        ovnisLabel = createOvnisLabel();
+        ovnisCount = createOvnisCountField();
+
+        messagePanel.add(ovnisLabel);
+        messagePanel.add(ovnisCount);
+        messagePanel.setOpaque(false);
+        BackgroundPanel.add(messagePanel, BorderLayout.CENTER);
+    }
+
+    private JLabel createOvnisLabel() {
+        JLabel messageLabel = new JLabel("Ovnis con llegada exitosa: ");
+        messageLabel.setForeground(GlobalView.TITLE_TEXT); 
+        messageLabel.setFont(GlobalView.ALL_TEXT_FONT);
+        return messageLabel;
+    }
+
+    private JTextField createOvnisCountField() {
+        JTextField textField = new JTextField("", 10);
+        textField.setEditable(false); 
+        textField.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, GlobalView.ALL_TEXT)); 
+        textField.setBackground(GlobalView.OPTIONS_BACKGROUND); 
+        textField.setForeground(GlobalView.TITLE_TEXT); 
+        textField.setFont(GlobalView.ALL_TEXT_FONT);
+        return textField;
     }
 
     public void initButtons(){

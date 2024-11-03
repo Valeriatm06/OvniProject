@@ -1,4 +1,4 @@
-package co.edu.uptc.views.OvniMainFrame;
+package co.edu.uptc.views.UfoMainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,19 +10,20 @@ import lombok.Getter;
 @Getter
 public class GameInfoPanel extends JPanel {
 
-    private OvniMainView ovniMainView;
+    private UfoMainView ufoMainView;
     private PropertiesService propertiesService;
-    private JLabel movingOvniLabel;
-    private JLabel crashedOvniLabel;
-    private JLabel ovniLabel;
+    private JLabel movingUfoLabel;
+    private JLabel crashedUfoLabel;
+    private JLabel arrivalUfoLabel;
+    private JLabel ufoLabel;
     private JCheckBox showTrajectoryCheckBox;
-    private int ovniType;
+    private int ufoType;
 
-    public GameInfoPanel(OvniMainView ovniMainView) {
-        this.ovniMainView = ovniMainView;
+    public GameInfoPanel(UfoMainView ufoMainView) {
+        this.ufoMainView = ufoMainView;
         propertiesService = new PropertiesService();
-        ovniType = 1;
-        setPreferredSize(new Dimension(300, 300)); 
+        ufoType = 1;
+        setPreferredSize(new Dimension(270, 300)); 
         setBackground(GlobalView.OPTIONS_BACKGROUND);
         setLayout(new GridBagLayout());
         initComponents();
@@ -37,7 +38,7 @@ public class GameInfoPanel extends JPanel {
         addHorizontalLine(gbc);
         initTrajectoryCheckbox(gbc);
         addHorizontalLine(gbc);
-        initOvniStatusSection(gbc);
+        initUfoStatus(gbc);
     }
 
     private void initTitle(GridBagConstraints gbc) {
@@ -66,14 +67,14 @@ public class GameInfoPanel extends JPanel {
     }
 
     private void initSelectionSection(GridBagConstraints gbc) {
-        addOvniSelector(gbc);
+        addUfoSelector(gbc);
         
         addSpeedPanel(gbc, "upArrow", "+ Velocidad");
     
         addSpeedPanel(gbc, "downArrow", "- Velocidad");
     }
     
-    private void addOvniSelector(GridBagConstraints gbc) {
+    private void addUfoSelector(GridBagConstraints gbc) {
         JLabel selectLabel = createLabel("Seleccionar OVNI:");
         gbc.gridy++;
         gbc.gridx = 0;
@@ -81,9 +82,9 @@ public class GameInfoPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(selectLabel, gbc);
     
-        ovniLabel = new JLabel(new ImageIcon(getOvniImagePath(ovniType)));
+        ufoLabel = new JLabel(new ImageIcon(getUfoPath(ufoType)));
         gbc.gridx = 1;
-        add(ovniLabel, gbc);
+        add(ufoLabel, gbc);
     }
     
     private void addSpeedPanel(GridBagConstraints gbc, String arrowKey, String text) {
@@ -133,40 +134,50 @@ public class GameInfoPanel extends JPanel {
         add(showTrajectoryCheckBox, gbc);
     }
 
-    private void initOvniStatusSection(GridBagConstraints gbc) {
+    private void initUfoStatus(GridBagConstraints gbc) {
         gbc.gridy++;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL; 
 
-        movingOvniLabel = new JLabel("OVNIS en movimiento:");
-        movingOvniLabel.setFont(GlobalView.ALL_TEXT_FONT);
-        movingOvniLabel.setForeground(GlobalView.TITLE_TEXT);
-        add(movingOvniLabel, gbc);
+        movingUfoLabel = new JLabel("OVNIS en movimiento:");
+        movingUfoLabel.setFont(GlobalView.ALL_TEXT_FONT);
+        movingUfoLabel.setForeground(GlobalView.TITLE_TEXT);
+        add(movingUfoLabel, gbc);
 
         gbc.gridy++;
-        crashedOvniLabel = new JLabel("OVNIS estrellados:");
-        crashedOvniLabel.setFont(GlobalView.ALL_TEXT_FONT);
-        crashedOvniLabel.setForeground(GlobalView.TITLE_TEXT);
-        add(crashedOvniLabel, gbc);
+        crashedUfoLabel = new JLabel("OVNIS estrellados:");
+        crashedUfoLabel.setFont(GlobalView.ALL_TEXT_FONT);
+        crashedUfoLabel.setForeground(GlobalView.TITLE_TEXT);
+        add(crashedUfoLabel, gbc);
+
+        gbc.gridy++;
+        arrivalUfoLabel = new JLabel("OVNIS en llegada:");
+        arrivalUfoLabel.setFont(GlobalView.ALL_TEXT_FONT);
+        arrivalUfoLabel.setForeground(GlobalView.TITLE_TEXT);
+        add(arrivalUfoLabel, gbc);
     }
 
-    private String getOvniImagePath(int ovniType) {
-        return propertiesService.getKeyValue("ufo" + ovniType + "Path");
+    private String getUfoPath(int ufoType) {
+        return propertiesService.getKeyValue("ufo" + ufoType + "Path");
     }
 
-    public void updateOvniType(int newOvniType) {
-        this.ovniType = newOvniType;
-        ovniLabel.setIcon(new ImageIcon(getOvniImagePath(newOvniType)));
+    public void updateufoType(int newufoType) {
+        this.ufoType = newufoType;
+        ufoLabel.setIcon(new ImageIcon(getUfoPath(newufoType)));
         revalidate();
         repaint();
     }
 
-    public void updateMovingOvniCount(int count) {
-        movingOvniLabel.setText("OVNIS en movimiento: " + count);
+    public void upDateMovingUfoCount(int count) {
+        movingUfoLabel.setText("OVNIS en movimiento: " + count);
     }
 
-    public void updateCrashedOvniCount(int count) {
-        crashedOvniLabel.setText("OVNIS estrellados: " + count);
+    public void updatCrashedUfoCount(int count) {
+        crashedUfoLabel.setText("OVNIS estrellados: " + count);
+    }
+
+    public void upDateArrivalUfoCount(int count){
+        arrivalUfoLabel.setText("OVNIS en llegada: " + count);
     }
 
     public boolean isTrajectoryVisible() {

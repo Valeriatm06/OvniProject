@@ -7,7 +7,7 @@ import java.awt.Point;
 
 @Setter
 @Getter
-public class Ovni {
+public class Ufover1 {
     
     private Point positionPoint;
     private Point destinationPoint;
@@ -17,13 +17,17 @@ public class Ovni {
     private boolean hasCollided;
     private boolean reachedDestination;
 
-    public Ovni(Point initialPosition, int speed, double angle) {
+    public Ufover1(Point initialPosition, int speed, double angle) {
         this.positionPoint = initialPosition;
         this.speed = speed;
         this.angle = angle;
         this.isMoving = true;
         this.hasCollided = false;
         this.reachedDestination = false;
-    } 
+    }
+
+    public Ufover1() {
+        this.positionPoint = new Point(0, 0); 
+    }
 
 }

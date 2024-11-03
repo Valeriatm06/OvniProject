@@ -1,4 +1,4 @@
-package co.edu.uptc.views.OvniMainFrame;
+package co.edu.uptc.views.UfoMainFrame;
 
 import javax.swing.*;
 import co.edu.uptc.utilities.DesignButton;

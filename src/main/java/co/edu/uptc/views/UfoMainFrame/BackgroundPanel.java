@@ -1,4 +1,4 @@
-package co.edu.uptc.views.OvniMainFrame;
+package co.edu.uptc.views.UfoMainFrame;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;

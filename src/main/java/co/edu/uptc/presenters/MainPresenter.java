@@ -1,20 +1,71 @@
 package co.edu.uptc.presenters;
 
-import co.edu.uptc.interfaces.OvniInterface;
+import java.util.List;
 
-public class MainPresenter implements OvniInterface.Presenter{
+import co.edu.uptc.interfaces.UfoInterface;
+import co.edu.uptc.pojos.Ufo;
+import lombok.Getter;
 
-    private OvniInterface.Model model;
-    private OvniInterface.View view;
+@Getter
+public class MainPresenter implements UfoInterface.Presenter{
+
+    private UfoInterface.Model model;
+    private UfoInterface.View view;
 
     @Override
-    public void setModel(OvniInterface.Model model) {
+    public void setModel(UfoInterface.Model model) {
         this.model = model;
     }
 
     @Override
-    public void setView(OvniInterface.View view) {
+    public void setView(UfoInterface.View view) {
        this.view = view;
+    }
+
+    @Override
+    public int[] areaSize() {
+        return view.areaSize();
+    }
+
+    @Override
+    public void startGame(int ufoNumber, double speed) {
+       model.startGame(ufoNumber, speed);
+    }
+
+    @Override
+    public boolean isRunning() {
+        return model.isRunning();
+    }
+
+    @Override
+    public List<Ufo> getUfos() {
+       return model.getUfosList();
+    }
+
+    @Override
+    public void updateUfos(List<Ufo> ufos) {
+        view.updateUfoDisplay(ufos);
+    }
+
+    @Override
+    public void updateScore(int crashedCount) {
+        // Lógica para actualizar la puntuación basada en los OVNIs estrellados
+        view.updateScoreDisplay(crashedCount);
+    }
+
+    @Override
+    public void updateArrival(int arrivedCount) {
+        view.updateArrivalDisplay(arrivedCount);
+    }
+
+    @Override
+    public void countMovingUfos(int movingNumber) {
+       view.updateMovingCount(movingNumber);
+    }
+
+    @Override
+    public int[] destinationAreaSize() {
+        return view.destinationAreaSize();
     }
 
 }

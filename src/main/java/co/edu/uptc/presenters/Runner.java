@@ -1,19 +1,19 @@
 package co.edu.uptc.presenters;
 
-import co.edu.uptc.interfaces.OvniInterface;
-import co.edu.uptc.models.OvniModel;
-import co.edu.uptc.views.OvniMainFrame.OvniMainView;
+import co.edu.uptc.interfaces.UfoInterface;
+import co.edu.uptc.models.UfoModel;
+import co.edu.uptc.views.UfoMainFrame.UfoMainView;
 
 public class Runner {
     
-    private OvniInterface.Model model;
-    private OvniInterface.Presenter presenter;
-    private OvniInterface.View view;
+    private UfoInterface.Model model;
+    private UfoInterface.Presenter presenter;
+    private UfoInterface.View view;
     
     private void makeMVP(){
-        this.model = new OvniModel();
+        this.model = new UfoModel();
         this.presenter = new MainPresenter();
-        this.view = new OvniMainView();
+        this.view = new UfoMainView();
 
         view.setPresenter(presenter);
         model.setPresenter(presenter);
