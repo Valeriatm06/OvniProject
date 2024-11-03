@@ -57,7 +57,8 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         mainPanel.getPlayButton().addActionListener(e -> {
             CardLayout layout = (CardLayout) getContentPane().getLayout();
             layout.show(getContentPane(), "GamePanel");
-            updateOptionsFromDialog(); 
+            updateOptionsFromDialog();
+            startGame(); 
         });
         
     }
@@ -69,7 +70,6 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         }
         optionsDialog.setVisible(true);
         
-        updateOptionsFromDialog();
     }
     
     public void updateOptionsFromDialog() {
@@ -78,9 +78,12 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         speed = optionsDialog.getSpeed();
         ufoType = optionsDialog.getSelectedUfoType();
 
-        gamePanel.startUfoGame(ufoCount, speed);
         gamePanel.updateufoType(ufoType);
         gamePanel.getInfoArea().updateufoType(ufoType);
+    }
+
+    public void startGame() {
+        gamePanel.startUfoGame(ufoCount, speed, appearanceTime);
     }
     
     @Override
@@ -116,6 +119,12 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
 
     @Override
+    public void refresh() {
+        // Esto puede incluir repaint() o actualizar la interfaz según sea necesario
+        gamePanel.getUfoAreaPanel().repaint();
+    }
+
+    @Override
     public void begin() {
         setVisible(true);
     }
@@ -125,9 +134,14 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
        return gamePanel.getUfoArea();
     }
 
+    @Override
     public int[] destinationAreaSize(){
         return gamePanel.getDestinationArea();
     }
     
+    @Override
+    public int[] ufoSize(){
+        return gamePanel.getUfoSize();
+    }
     
 }

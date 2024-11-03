@@ -40,7 +40,7 @@ public class GamePanel extends JPanel {
     }
 
     private void initufoArea() {
-        ufoAreaPanel = new UfoAreaPanel(new ImageIcon(getUfoPath(ufoType)).getImage());
+        ufoAreaPanel = new UfoAreaPanel(new ImageIcon(getUfoPath(ufoType)).getImage(), this);
         backgroundPanel.add(ufoAreaPanel, BorderLayout.CENTER);
     }
     
@@ -58,14 +58,14 @@ public class GamePanel extends JPanel {
             backgroundPanel.remove(ufoAreaPanel);
         }
     
-        ufoAreaPanel = new UfoAreaPanel(new ImageIcon(getUfoPath(ufoType)).getImage());
+        ufoAreaPanel = new UfoAreaPanel(new ImageIcon(getUfoPath(ufoType)).getImage(), this);
         backgroundPanel.add(ufoAreaPanel, BorderLayout.CENTER);    
         revalidate(); 
         repaint(); 
     }
 
-    public void startUfoGame(int ufoCount, double speed) {
-        ufoMainView.getPresenter().startGame(ufoCount, speed);
+    public void startUfoGame(int ufoCount, double speed, int appearance) {
+        ufoMainView.getPresenter().startGame(ufoCount, speed, appearance);
     
         Thread thread = new Thread(() -> {
             while (ufoMainView.getPresenter().isRunning()) {
@@ -93,6 +93,13 @@ public class GamePanel extends JPanel {
         size[2] = UfoAreaPanel.ARRIVAL_AREA_WIDTH; 
         size[3] = UfoAreaPanel.ARRIVAL_AREA_HEIGHT;
         return size; 
+    }
+
+    public int[] getUfoSize(){
+        int[] size = new int[2];
+        size[0] = ufoAreaPanel.getUfoImage().getWidth(this); 
+        size[1] = ufoAreaPanel.getUfoImage().getHeight(this); 
+        return size;
     }
 
     public void updateUfos(List<Ufo> ufos) {

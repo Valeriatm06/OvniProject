@@ -1,5 +1,6 @@
 package co.edu.uptc.interfaces;
 
+import java.awt.Point;
 import java.util.List;
 
 import co.edu.uptc.pojos.Ufo;
@@ -9,11 +10,19 @@ public interface UfoInterface {
     public interface Model {
         public void setPresenter(Presenter presenter);
 
-        public void startGame(int ufoNumber, double speed);
+        public void startGame(int ufoNumber, double speed, int appearance);
 
         public boolean isRunning();
 
         public List<Ufo> getUfosList();
+
+        public Ufo selectUfoAtPosition(int x, int y);
+
+        public void changeSelectedUfoSpeed(int delta);
+
+        public Ufo getSelectedUfo();
+
+        public void addTrajectoryPointToUfo(Ufo ufo, Point point);
 
     }
 
@@ -26,7 +35,9 @@ public interface UfoInterface {
 
         public int[] destinationAreaSize();
 
-        public void startGame(int ufoNumber, double speed);
+        public int[] ufoSize();
+
+        public void startGame(int ufoNumber, double speed,int appearance);
 
         public boolean isRunning();
 
@@ -39,6 +50,14 @@ public interface UfoInterface {
         public void updateArrival(int arrivedCount);
 
         public void countMovingUfos(int movingCount);
+
+        public void updateSpeed(double newSpeed);
+
+        public Ufo selectUfoAtPosition(int x, int y);
+
+        public void changeSelectedUfoSpeed(int delta);
+
+        public void addTrajectoryPointToSelectedUfo(Point point);
     }
 
     public interface View {
@@ -50,6 +69,8 @@ public interface UfoInterface {
 
         public int[] destinationAreaSize();
 
+        public int[] ufoSize();
+
         public void updateUfoDisplay(List<Ufo> ufos);
 
         public void updateScoreDisplay(int crashedCount);
@@ -57,5 +78,7 @@ public interface UfoInterface {
         public void updateArrivalDisplay(int arrivedCount);
 
         public void updateMovingCount(int crashedCount);
+
+        public void refresh();
     }
 }
