@@ -6,10 +6,12 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -46,7 +48,7 @@ public class UfoAreaPanel extends JPanel {
         setFocusable(true); // Asegúrate de que el panel es enfocable
         requestFocusInWindow();
 
-        // Agregar un listener para el foco
+        // Listener para el foco
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -66,61 +68,97 @@ public class UfoAreaPanel extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(arrivalAreaImage, ARRIVAL_AREA_X, ARRIVAL_AREA_Y, ARRIVAL_AREA_WIDTH, ARRIVAL_AREA_HEIGHT, this);
-        if (ufos != null) {
-            for (Ufo ufo : ufos) {
-                Point position = ufo.getPosition();
-                g.drawImage(ufoImage, position.x, position.y, this);
-                if (ufo == selectedUfo) { // Resaltar el OVNI seleccionado
-                    g.setColor(Color.RED);
-                    g.drawRect(position.x, position.y, ufoImage.getWidth(this), ufoImage.getHeight(this));
-                }
+protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawImage(arrivalAreaImage, ARRIVAL_AREA_X, ARRIVAL_AREA_Y, ARRIVAL_AREA_WIDTH, ARRIVAL_AREA_HEIGHT, this);
+    if (ufos != null) {
+        for (Ufo ufo : ufos) {
+            Point position = ufo.getPosition();
+            g.drawImage(ufoImage, position.x, position.y, this);
+            if (ufo == selectedUfo) { // Resaltar el OVNI seleccionado
+                g.setColor(Color.RED);
+                g.drawRect(position.x, position.y, ufoImage.getWidth(this), ufoImage.getHeight(this));
+            }
+            // Dibujar trayectoria
+            drawTrajectory(g, ufo);
+        }
+    }
+}
+
+
+private void drawTrajectory(Graphics g, Ufo ufo) {
+    List<Point> trajectory = ufo.getTrajectory();
+    if (trajectory != null && !trajectory.isEmpty()) { // Asegúrate de que haya puntos
+        g.setColor(Color.BLUE);
+        for (int i = 0; i < trajectory.size() - 1; i++) {
+            Point start = trajectory.get(i);
+            Point end = trajectory.get(i + 1);
+            if (start != null && end != null) {
+                g.drawLine(start.x, start.y, end.x, end.y);
             }
         }
     }
+}
+    
+    
 
     private void loadArrivalAreaImage() {
         arrivalAreaImage = new ImageIcon(propertiesService.getKeyValue("balckHoLePath")).getImage();
     }
 
-    public void initMouseListener(){
+    private void initMouseListener() {
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                selectUfoAtPosition(e.getX(), e.getY());
-                requestFocusInWindow(); // Asegúrate de que el panel obtenga el foco
-                repaint(); // Volver a dibujar para mostrar el OVNI seleccionado
-            }
-        });
-    }
-
-    public void initKeyListener() {
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println("Tecla presionada: " + e.getKeyCode());
-                if (selectedUfo != null) {
-                    System.out.println("OVNI seleccionado: " + selectedUfo);
-                    switch (e.getKeyCode()) {
-                        case KeyEvent.VK_UP:
-                            System.out.println("Aumentando velocidad...");
-                            gamePanel.getUfoMainView().getPresenter().changeSelectedUfoSpeed(1);
-                            break;
-                        case KeyEvent.VK_DOWN:
-                            System.out.println("Disminuyendo velocidad...");
-                            gamePanel.getUfoMainView().getPresenter().changeSelectedUfoSpeed(-1);
-                            break;
+            public void mousePressed(MouseEvent e) {
+                Ufo clickedUfo = selectUfoAtPosition(e.getX(), e.getY());
+    
+                if (clickedUfo != null) {
+                    // Si se clickeó el mismo OVNI, solo permitir cambiar la velocidad
+                    if (selectedUfo == clickedUfo) {
+                        System.out.println("Cambiando velocidad del OVNI seleccionado");
+                    } else {
+                        // Se clickeó un nuevo OVNI, seleccionar sin eliminar la trayectoria
+                        selectedUfo = clickedUfo; 
+                        System.out.println("OVNI seleccionado: " + selectedUfo);
                     }
                 } else {
-                    System.out.println("No hay OVNI seleccionado.");
+                    // Si se clickeó en el área vacía y hay un OVNI seleccionado, no hacer nada
+                    if (selectedUfo != null) {
+                        System.out.println("Clic en el área vacía, la trayectoria no se elimina.");
+                    }
+                }
+    
+                requestFocusInWindow();
+                repaint();
+            }
+    
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (selectedUfo != null && !selectedUfo.getTrajectory().isEmpty()) {
+                    // Reiniciar el movimiento del OVNI con la nueva trayectoria
+                    gamePanel.getUfoMainView().getPresenter().startUfoMovement(selectedUfo);
+                }
+                repaint(); // Redibuja después de soltar el mouse
+            }
+        });
+    
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (selectedUfo != null) {
+                    addTrajectoryPoint(e.getPoint()); // Añadir punto a la trayectoria
+                    repaint(); // Redibujar para mostrar la nueva trayectoria
                 }
             }
         });
     }
+    
 
-    public void selectUfoAtPosition(int x, int y) {
+    
+    
+    
+    
+    public Ufo selectUfoAtPosition(int x, int y) {
         Ufo ufo = gamePanel.getUfoMainView().getPresenter().selectUfoAtPosition(x, y);
         if (ufo != null) {
             selectedUfo = ufo;
@@ -128,6 +166,43 @@ public class UfoAreaPanel extends JPanel {
         } else {
             System.out.println("No se seleccionó ningún OVNI en la posición: " + x + ", " + y);
         }
-        repaint(); // Vuelve a dibujar para reflejar el cambio
+        repaint();
+        return selectedUfo; // Vuelve a dibujar para reflejar el cambio
     }
-}
+    
+
+    private void addTrajectoryPoint(Point point) {
+        if (selectedUfo != null && point != null) {
+            selectedUfo.getTrajectory().add(point); // Agregar el nuevo punto a la trayectoria
+        }
+    }
+
+    public void initKeyListener() {
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (selectedUfo != null) {
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_UP:
+                            gamePanel.getUfoMainView().getPresenter().changeSelectedUfoSpeed(1);
+                            break;
+                        case KeyEvent.VK_DOWN:
+                            gamePanel.getUfoMainView().getPresenter().changeSelectedUfoSpeed(-1);
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    // public void selectUfoAtPosition(int x, int y) {
+    //     Ufo ufo = gamePanel.getUfoMainView().getPresenter().selectUfoAtPosition(x, y);
+    //     if (ufo != null) {
+    //         selectedUfo = ufo;
+    //         System.out.println("OVNI seleccionado: " + ufo);
+    //     } else {
+    //         System.out.println("No se seleccionó ningún OVNI en la posición: " + x + ", " + y);
+    //     }
+    //     repaint(); // Vuelve a dibujar para reflejar el cambio
+    // }
+} 

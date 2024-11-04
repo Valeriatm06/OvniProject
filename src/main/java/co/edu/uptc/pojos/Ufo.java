@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Ufo {
     private Point position;
     private double speed; 
@@ -22,30 +24,6 @@ public class Ufo {
         this.angle = angle;
         this.moving = true; 
         this.trajectory = new ArrayList<>(); // Inicializar la trayectoria
-    }
-
-    public Point getPosition() {
-        return position;
-    }
-
-    public void setPosition(Point position) {
-        this.position = position;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
     }
 
     public boolean isMoving() {
@@ -68,12 +46,16 @@ public class Ufo {
         trajectory.add(point);
     }
 
-    public List<Point> getTrajectory() {
-        return trajectory;
-    }
-
     public void clearTrajectory() {
         trajectory.clear();
+    }
+
+    public boolean hasTrajectory() {
+        return !trajectory.isEmpty();
+    }
+
+    public Point getNextTrajectoryPoint() {
+        return hasTrajectory() ? trajectory.get(0) : null;
     }
 
     @Override

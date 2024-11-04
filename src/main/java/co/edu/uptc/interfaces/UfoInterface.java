@@ -22,7 +22,9 @@ public interface UfoInterface {
 
         public Ufo getSelectedUfo();
 
-        public void addTrajectoryPointToUfo(Ufo ufo, Point point);
+        public void addTrajectoryPointToSelectedUfo(Point point);
+
+        public void startUfoMovement(Ufo ufo);
 
     }
 
@@ -57,7 +59,9 @@ public interface UfoInterface {
 
         public void changeSelectedUfoSpeed(int delta);
 
-        public void addTrajectoryPointToSelectedUfo(Point point);
+        public void addTrajectoryPointToUfo(Ufo ufo, Point point);
+
+        public void startUfoMovement(Ufo ufo);
     }
 
     public interface View {

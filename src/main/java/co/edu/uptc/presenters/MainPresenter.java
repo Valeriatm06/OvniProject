@@ -95,10 +95,13 @@ public class MainPresenter implements UfoInterface.Presenter{
     }
 
     @Override
-    public void addTrajectoryPointToSelectedUfo(Point point) {
-        if (model.getSelectedUfo() != null) {
-            model.addTrajectoryPointToUfo(model.getSelectedUfo(), point);
-        }
+    public void addTrajectoryPointToUfo(Ufo ufo, Point point) {
+            model.addTrajectoryPointToSelectedUfo(point);;
+    }
+
+    @Override
+    public void startUfoMovement(Ufo ufo) {
+        model.startUfoMovement(ufo);
     }
 
 }

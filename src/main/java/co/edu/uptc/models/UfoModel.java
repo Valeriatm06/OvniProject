@@ -5,6 +5,7 @@ import lombok.Setter;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import co.edu.uptc.interfaces.UfoInterface;
@@ -59,69 +60,109 @@ public class UfoModel implements UfoInterface.Model {
         }).start();
     }
 
-    private void startUfoMovement(Ufo ufo) {
+    @Override
+    public void startUfoMovement(Ufo ufo) {
         new Thread(() -> {
-            while (running && ufo.isMoving()) {
-                updateUfoPosition(ufo);
-                checkCollisions(); // Verificar colisiones en cada movimiento
-                countMovingUfos(); // Contar OVNIs en movimiento
-                try {
+            try {
+                while (running && ufo.isMoving()) {
+                    updateUfoPosition(ufo);
+                    checkCollisions(); // Verificar colisiones en cada movimiento
+                    countMovingUfos(); // Contar OVNIs en movimiento
+                    
+                    // En vez de repaint() aquí, asegúrate de que se llame desde la vista después de actualizar
                     Thread.sleep(100); // Controla la velocidad de movimiento
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break; // Salir si se interrumpe
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restaurar el estado de interrupción
             }
         }).start();
     }
+    
 
-    private void updateUfoPosition(Ufo ufo) {
-        if (!ufo.getTrajectory().isEmpty()) {
-            Point target = ufo.getTrajectory().get(0);
+    private synchronized void updateUfoPosition(Ufo ufo) {
+        List<Point> trajectory = ufo.getTrajectory();
+        
+        if (trajectory != null && !trajectory.isEmpty()) {
+            // Evita ConcurrentModificationException al trabajar en una copia
+            List<Point> trajectoryCopy = new ArrayList<>(trajectory);
+            
+            // Mover el OVNI según la trayectoria copiada
+            Point target = trajectoryCopy.get(0);
             double deltaX = target.x - ufo.getPosition().x;
             double deltaY = target.y - ufo.getPosition().y;
             double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
+            
             if (distance < ufo.getSpeed()) {
                 ufo.setPosition(target);
-                ufo.getTrajectory().remove(0); // Remover punto alcanzado
+                trajectory.remove(0); // Remover el punto alcanzado
             } else {
                 double angleToTarget = Math.atan2(deltaY, deltaX);
                 Point newPosition = new Point(
-                        (int) (ufo.getPosition().x + ufo.getSpeed() * Math.cos(angleToTarget)),
-                        (int) (ufo.getPosition().y + ufo.getSpeed() * Math.sin(angleToTarget))
+                    (int) (ufo.getPosition().x + ufo.getSpeed() * Math.cos(angleToTarget)),
+                    (int) (ufo.getPosition().y + ufo.getSpeed() * Math.sin(angleToTarget))
                 );
                 ufo.setPosition(newPosition);
             }
         } else {
-            // Si no hay trayectoria, sigue moviéndose en la dirección del ángulo
-            Point position = ufo.getPosition();
-            double speed = ufo.getSpeed();
-            double angle = Math.toRadians(ufo.getAngle());
-            position.x += speed * Math.cos(angle);
-            position.y += speed * Math.sin(angle);
-            ufo.setPosition(position);
+            // Si no hay trayectoria, moverse en la dirección actual
+            moveInAngle(ufo); // Usa el método que ya tienes para mover según el ángulo
         }
-
-        // Verificar si el OVNI está fuera de límites
+        
+        // Si se completa la trayectoria, mantener la dirección
+        if (trajectory.isEmpty()) {
+            // Calcular el ángulo basado en la última posición de la trayectoria
+            if (ufo.getTrajectory().size() > 0) {
+                Point lastPoint = ufo.getTrajectory().get(ufo.getTrajectory().size() - 1);
+                double deltaX = lastPoint.x - ufo.getPosition().x;
+                double deltaY = lastPoint.y - ufo.getPosition().y;
+                ufo.setAngle(Math.toDegrees(Math.atan2(deltaY, deltaX))); // Actualizar el ángulo
+            }
+            moveInAngle(ufo); // Mover en la dirección del ángulo actual
+        }
+        
         if (isOutOfBounds(ufo.getPosition())) {
             ufo.stop(); // Detener el OVNI si sale de los límites
         }
-
+    
         presenter.updateUfos(new ArrayList<>(ufos)); // Actualiza la interfaz después de mover
     }
+    
+    
+    
+    
+    
 
-    @Override
-public void addTrajectoryPointToUfo(Ufo ufo, Point point) {
-    if (ufo != null) {
-        List<Point> trajectory = ufo.getTrajectory();
+private void moveInAngle(Ufo ufo) {
+    Point position = ufo.getPosition();
+    double angle = Math.toRadians(ufo.getAngle());
+    position.x += ufo.getSpeed() * Math.cos(angle);
+    position.y += ufo.getSpeed() * Math.sin(angle);
+    ufo.setPosition(position);
+}
+
+    
+
+@Override
+public void addTrajectoryPointToSelectedUfo(Point point) {
+    if (selectedUfo != null) {
+        List<Point> trajectory = selectedUfo.getTrajectory();
         if (trajectory == null) {
             trajectory = new ArrayList<>();
-            ufo.setTrajectory(trajectory);
+            selectedUfo.setTrajectory(trajectory);
         }
-        trajectory.add(point);
+        // Sincronizar el acceso a la trayectoria
+        synchronized (trajectory) {
+            if (point != null) {
+                trajectory.add(point); // Añadir el nuevo punto sin limpiar
+            } else {
+                System.out.println("Se intentó añadir un punto nulo a la trayectoria.");
+            }
+        }
     }
 }
+
+
+
 
 
     private boolean isOutOfBounds(Point position) {
@@ -246,16 +287,18 @@ public void addTrajectoryPointToUfo(Ufo ufo, Point point) {
     
 
     @Override
-    public void changeSelectedUfoSpeed(int delta) {
-        if (selectedUfo != null) {
-            double newSpeed = Math.max(0, selectedUfo.getSpeed() + delta); // Evitar velocidad negativa
-            selectedUfo.setSpeed(newSpeed);
-            presenter.updateSpeed(newSpeed); // Actualizar en la interfaz
-            System.out.println("Nueva velocidad: " + newSpeed); // Para depuración
-        } else {
-            System.out.println("No hay OVNI seleccionado."); // Para depuración
-        }
+public void changeSelectedUfoSpeed(int delta) {
+    if (selectedUfo != null) {
+        double newSpeed = Math.max(0, selectedUfo.getSpeed() + delta);
+        selectedUfo.setSpeed(newSpeed);
+        presenter.updateSpeed(newSpeed); // Actualizar en la interfaz
+        System.out.println("Nueva velocidad: " + newSpeed); // Para depuración
+        // No reiniciar el movimiento aquí
+    } else {
+        System.out.println("No hay OVNI seleccionado."); // Para depuración
     }
+}
+
 
 
     
