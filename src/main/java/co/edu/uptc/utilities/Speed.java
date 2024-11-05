@@ -1,9 +1,9 @@
 package co.edu.uptc.utilities;
 
 public enum Speed {
-    LENTO(2),
-    MEDIO(5),
-    RAPIDO(10);
+    SLOW(2),
+    MEDIUM(5),
+    FAST(10);
 
     private final int value;
 

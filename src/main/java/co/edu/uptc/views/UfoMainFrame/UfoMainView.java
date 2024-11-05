@@ -18,7 +18,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     private OptionsDialog optionsDialog;
     private int ufoCount = 5; 
     private int appearanceTime = 1000;
-    private int speed = Speed.MEDIO.getValue();
+    private int speed = Speed.MEDIUM.getValue();
     private int ufoType = 1;
 
     public UfoMainView(){
@@ -51,18 +51,26 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
     
 
-    public void buttonsEvent(){
+    public void buttonsEvent() {
         mainPanel.getOptionsButton().addActionListener(e -> showOptionsDialog());
-        mainPanel.getExitButton().addActionListener(e -> System.exit(0));
-        mainPanel.getPlayButton().addActionListener(e -> {
-            CardLayout layout = (CardLayout) getContentPane().getLayout();
-            layout.show(getContentPane(), "GamePanel");
-            updateOptionsFromDialog();
-            startGame(); 
-        });
-        
+        mainPanel.getExitButton().addActionListener(e -> exitGame());
+        mainPanel.getPlayButton().addActionListener(e -> startGameFromMainPanel());
     }
     
+    private void exitGame() {
+        System.exit(0);
+    }
+    
+    private void startGameFromMainPanel() {
+        switchToGamePanel();
+        updateOptionsFromDialog();
+        startGame();
+    }
+    
+    private void switchToGamePanel() {
+        CardLayout layout = (CardLayout) getContentPane().getLayout();
+        layout.show(getContentPane(), "GamePanel");
+    }
 
     private void showOptionsDialog() {
         if (optionsDialog == null) {
@@ -83,32 +91,68 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
 
     public void startGame() {
+        resetCountersInView();  
+        gamePanel.setVisible(true);
         gamePanel.startUfoGame(ufoCount, speed, appearanceTime);
     }
     
+    public void checkGameFinished() {
+        if (presenter.allUfosStopped()) {
+            showGameFinishedDialog();
+        }
+    }
+    
+    private void showGameFinishedDialog() {
+        GameFinishedDialog gameFinishedDialog = new GameFinishedDialog(this);
+        
+        gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu(gameFinishedDialog));
+        gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame(gameFinishedDialog));
+        
+        gameFinishedDialog.setVisible(true);
+    }
+    
+    private void returnToMainMenu(GameFinishedDialog gameFinishedDialog) {
+        switchToMainPanel();
+        gameFinishedDialog.dispose();
+    }
+    
+    private void switchToMainPanel() {
+        CardLayout layout = (CardLayout) getContentPane().getLayout();
+        layout.show(getContentPane(), "MainPanel");
+    }
+    
+    private void restartGame(GameFinishedDialog gameFinishedDialog) {
+        switchToGamePanel();
+        gameFinishedDialog.dispose();
+        startGame();
+    }
+    
+    
+    public void resetCountersInView() {
+        gamePanel.getInfoArea().updatCrashedUfoCount(0);  
+        gamePanel.getInfoArea().upDateArrivalUfoCount(0); 
+        gamePanel.getInfoArea().upDateMovingUfoCount(0);
+    }
+    
+    
     @Override
     public void updateUfoDisplay(List<Ufo> ufos) {
-        // Actualiza la visualización de los OVNIs en la interfaz
         gamePanel.updateUfos(ufos);
+        checkGameFinished();
     }
 
     @Override
     public void updateScoreDisplay(int crashedCount) {
-        // Actualiza la visualización de la puntuación
-        // Por ejemplo, podrías tener un JLabel que muestre la puntuación
         gamePanel.getInfoArea().updatCrashedUfoCount(crashedCount);
     }
 
     @Override
     public void updateMovingCount(int movingCount) {
-        // Actualiza la visualización de la puntuación
-        // Por ejemplo, podrías tener un JLabel que muestre la puntuación
         gamePanel.getInfoArea().upDateMovingUfoCount(movingCount);
     }
 
     @Override
     public void updateArrivalDisplay(int arrivedCount) {
-        // Actualiza la visualización de las llegadas
         gamePanel.getInfoArea().upDateArrivalUfoCount(arrivedCount);
     }
 
@@ -120,7 +164,6 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
 
     @Override
     public void refresh() {
-        // Esto puede incluir repaint() o actualizar la interfaz según sea necesario
         gamePanel.getUfoAreaPanel().repaint();
     }
 

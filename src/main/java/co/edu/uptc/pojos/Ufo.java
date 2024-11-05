@@ -16,14 +16,17 @@ public class Ufo {
     private double speed; 
     private double angle; 
     private boolean moving; 
-    private List<Point> trajectory; // Lista para almacenar la trayectoria
+    private List<Point> trajectory; 
+    private double previousAngle; 
+    private Thread movementThread;
 
     public Ufo(Point position, double speed, double angle) {
         this.position = position;
         this.speed = speed;
         this.angle = angle;
         this.moving = true; 
-        this.trajectory = new ArrayList<>(); // Inicializar la trayectoria
+        this.trajectory = new ArrayList<>(); 
+        this.previousAngle = angle; 
     }
 
     public boolean isMoving() {
@@ -58,14 +61,11 @@ public class Ufo {
         return hasTrajectory() ? trajectory.get(0) : null;
     }
 
-    @Override
-    public String toString() {
-        return "Ufo{" +
-                "position=" + position +
-                ", speed=" + speed +
-                ", angle=" + angle +
-                ", moving=" + moving +
-                ", trajectory=" + trajectory +
-                '}';
+    public void destroy() {
+        if (movementThread != null && movementThread.isAlive()) {
+            movementThread.interrupt();
+        }
+        trajectory.clear();
+        this.moving = false;
     }
 }

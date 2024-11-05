@@ -111,7 +111,7 @@ public class OptionsDialog extends JDialog {
         for (Speed speed : Speed.values()) {
             if (speed.getValue() == speedValue) return speed;
         }
-        return Speed.MEDIO; // Define un valor por defecto
+        return Speed.MEDIUM; 
     }
 
     private void addUfoType() {

@@ -50,7 +50,6 @@ public class MainPresenter implements UfoInterface.Presenter{
 
     @Override
     public void updateScore(int crashedCount) {
-        // Lógica para actualizar la puntuación basada en los OVNIs estrellados
         view.updateScoreDisplay(crashedCount);
     }
 
@@ -78,12 +77,10 @@ public class MainPresenter implements UfoInterface.Presenter{
     public void updateSpeed(double newSpeed) {
         if (model.getSelectedUfo() != null) {
             model.getSelectedUfo().setSpeed(newSpeed);
-            // Notifica a la vista sobre el cambio de velocidad si es necesario
-            view.refresh(); // O algún método que actualice la vista
+            view.refresh(); 
         }
     }
     
-
     @Override
     public Ufo selectUfoAtPosition(int x, int y) {
         return model.selectUfoAtPosition(x, y);
@@ -104,4 +101,8 @@ public class MainPresenter implements UfoInterface.Presenter{
         model.startUfoMovement(ufo);
     }
 
+    @Override
+    public boolean allUfosStopped() {
+        return model.allUfosStopped();
+    }
 }

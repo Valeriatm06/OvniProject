@@ -14,7 +14,6 @@ public class GameFinishedDialog extends JDialog {
 
     private JPanel BackgroundPanel;
     private JLabel titLabel;
-    private JLabel ovnisLabel;
     private JTextField ovnisCount; 
     private DesignButton playButton;
     private DesignButton menuButton;
@@ -27,9 +26,8 @@ public class GameFinishedDialog extends JDialog {
         setLocationRelativeTo(owner);
         initBackgroundPanel();
         initTitleLabel();
-        initMessageField();
         initButtons();
-        setVisible(true);
+        setVisible(false);
     }
 
     public void initBackgroundPanel(){
@@ -47,36 +45,6 @@ public class GameFinishedDialog extends JDialog {
         BackgroundPanel.add(titLabel, BorderLayout.NORTH);
     }
 
-    public void initMessageField() {
-        JPanel messagePanel = new JPanel();
-        messagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-
-        ovnisLabel = createOvnisLabel();
-        ovnisCount = createOvnisCountField();
-
-        messagePanel.add(ovnisLabel);
-        messagePanel.add(ovnisCount);
-        messagePanel.setOpaque(false);
-        BackgroundPanel.add(messagePanel, BorderLayout.CENTER);
-    }
-
-    private JLabel createOvnisLabel() {
-        JLabel messageLabel = new JLabel("Ovnis con llegada exitosa: ");
-        messageLabel.setForeground(GlobalView.TITLE_TEXT); 
-        messageLabel.setFont(GlobalView.ALL_TEXT_FONT);
-        return messageLabel;
-    }
-
-    private JTextField createOvnisCountField() {
-        JTextField textField = new JTextField("", 10);
-        textField.setEditable(false); 
-        textField.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, GlobalView.ALL_TEXT)); 
-        textField.setBackground(GlobalView.OPTIONS_BACKGROUND); 
-        textField.setForeground(GlobalView.TITLE_TEXT); 
-        textField.setFont(GlobalView.ALL_TEXT_FONT);
-        return textField;
-    }
-
     public void initButtons(){
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10)); 
         buttonsPanel.setOpaque(false);  
@@ -84,11 +52,12 @@ public class GameFinishedDialog extends JDialog {
 
         playButton = new DesignButton("Volver a jugar", true);
         playButton.setBackground(GlobalView.DEFAULT_BTN_BACKGROUND);
-        playButton.setPreferredSize(new Dimension(170, 40));  
+        playButton.setPreferredSize(new Dimension(170, 40));
+
 
         menuButton = new DesignButton("Volver al menu", true);
         menuButton.setBackground(GlobalView.DEFAULT_BTN_BACKGROUND);
-        menuButton.setPreferredSize(new Dimension(175, 40)); 
+        menuButton.setPreferredSize(new Dimension(175, 40));
 
         buttonsPanel.add(playButton);
         buttonsPanel.add(menuButton);

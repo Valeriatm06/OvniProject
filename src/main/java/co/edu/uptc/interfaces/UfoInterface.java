@@ -26,6 +26,8 @@ public interface UfoInterface {
 
         public void startUfoMovement(Ufo ufo);
 
+        public boolean allUfosStopped();
+
     }
 
     public interface Presenter {
@@ -62,6 +64,8 @@ public interface UfoInterface {
         public void addTrajectoryPointToUfo(Ufo ufo, Point point);
 
         public void startUfoMovement(Ufo ufo);
+
+        public boolean allUfosStopped();
     }
 
     public interface View {
