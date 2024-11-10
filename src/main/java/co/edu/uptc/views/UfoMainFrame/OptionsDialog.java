@@ -4,7 +4,6 @@ import javax.swing.*;
 import co.edu.uptc.utilities.DesignButton;
 import co.edu.uptc.utilities.DesignSpinner;
 import co.edu.uptc.utilities.PropertiesService;
-import co.edu.uptc.utilities.Speed;
 import co.edu.uptc.views.GlobalView;
 import java.awt.*;
 
@@ -20,7 +19,7 @@ public class OptionsDialog extends JDialog {
     private JButton lastSelectedButton;
     private DesignSpinner ufoCountSpinner;
     private DesignSpinner appearanceTimeSpinner;
-    private JComboBox<Speed> speedComboBox; 
+    private JComboBox<String> speedComboBox; 
     private int selectedUfoCount;
     private int selectedAppearanceTime;
     private int selectedSpeed; 
@@ -97,22 +96,44 @@ public class OptionsDialog extends JDialog {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         speedLabel = createLabel("Velocidad:", GlobalView.ALL_TEXT_FONT, GlobalView.TITLE_TEXT);
         panel.add(speedLabel);
-        
-        speedComboBox = new JComboBox<>(Speed.values());
-        speedComboBox.setSelectedItem(getSpeedEnum(selectedSpeed));
-        speedComboBox.addActionListener(e -> selectedSpeed = ((Speed) speedComboBox.getSelectedItem()).getValue());
-        
+    
+        String[] speedOptions = createSpeedOptions();
+    
+        speedComboBox = new JComboBox<>(speedOptions);
+        speedComboBox.setSelectedIndex(getSpeedIndex(selectedSpeed)); 
+        speedComboBox.addActionListener(e -> selectedSpeed = getSpeedFromSelection((String) speedComboBox.getSelectedItem()));
+    
         panel.add(speedComboBox);
         panel.setOpaque(false);
         mainPanel.add(panel);
     }
-
-    private Speed getSpeedEnum(int speedValue) {
-        for (Speed speed : Speed.values()) {
-            if (speed.getValue() == speedValue) return speed;
-        }
-        return Speed.MEDIUM; 
+    
+    private String[] createSpeedOptions() {
+        String slowSpeed = String.valueOf(propertiesService.getIntValue("ufoSlowSpeed"));
+        String mediumSpeed = String.valueOf(propertiesService.getIntValue("ufoMediumSpeed"));
+        String fastSpeed = String.valueOf(propertiesService.getIntValue("ufoFastSpeed"));
+        return new String[]{
+            "Lenta (" + slowSpeed + ")",
+            "Media (" + mediumSpeed + ")",
+            "Rapida (" + fastSpeed + ")"
+        };
     }
+    
+    private int getSpeedFromSelection(String selection) {
+        if (selection.contains("Lenta")) return propertiesService.getIntValue("ufoSlowSpeed");
+        if (selection.contains("Media")) return propertiesService.getIntValue("ufoMediumSpeed");
+        if (selection.contains("Rapida")) return propertiesService.getIntValue("ufoFastSpeed");
+        return 2; 
+    }
+    
+    private int getSpeedIndex(int speed) {
+        switch (speed) {
+            case 1: return 0;
+            case 2: return 1; 
+            case 3: return 2; 
+            default: return 1;
+        }
+    }    
 
     private void addUfoType() {
         JPanel ufoTypePanel = createUfoTypePanel();

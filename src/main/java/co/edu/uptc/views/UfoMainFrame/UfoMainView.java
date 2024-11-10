@@ -6,27 +6,37 @@ import java.util.List;
 
 import co.edu.uptc.interfaces.UfoInterface;
 import co.edu.uptc.pojos.Ufo;
-import co.edu.uptc.utilities.Speed;
+import co.edu.uptc.utilities.PropertiesService;
 import lombok.Getter;
 
 @Getter
 public class UfoMainView extends JFrame implements UfoInterface.View{
 
     private UfoInterface.Presenter presenter;
+    private PropertiesService propertiesService;
     private MainPanel mainPanel;
     private GamePanel gamePanel;
     private OptionsDialog optionsDialog;
-    private int ufoCount = 5; 
-    private int appearanceTime = 1000;
-    private int speed = Speed.MEDIUM.getValue();
-    private int ufoType = 1;
+    private int ufoCount; 
+    private int appearanceTime;
+    private int speed;
+    private int ufoType;
 
     public UfoMainView(){
+        propertiesService = new PropertiesService();
+        initValues();
         optionsDialog = new OptionsDialog(this, ufoCount, appearanceTime, speed, ufoType);
         initFrame();
         initMainPanel();
         initGamePanel();
         buttonsEvent();
+    }
+
+    public void initValues(){
+        this.ufoCount = 5;
+        this.appearanceTime=1000;
+        this.speed = propertiesService.getIntValue("ufoMediumSpeed");
+        this.ufoType = 1;
     }
 
     public void initFrame(){
@@ -108,7 +118,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu(gameFinishedDialog));
         gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame(gameFinishedDialog));
         
-        gameFinishedDialog.setVisible(true);
+        gameFinishedDialog.setVisible(true);    
     }
     
     private void returnToMainMenu(GameFinishedDialog gameFinishedDialog) {

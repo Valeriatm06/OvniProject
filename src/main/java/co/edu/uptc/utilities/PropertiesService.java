@@ -1,21 +1,47 @@
 package co.edu.uptc.utilities;
+
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.util.Properties;
 
 public class PropertiesService {
-   private String filePath="src/main/java/co/edu/uptc/resources/app.properties";
+    private final String filePath;
+    private Properties properties;
 
-    public String getKeyValue(String Key) {
-        Properties properties = new Properties();
-        String value = "";
+    public PropertiesService(String filePath) {
+        this.filePath = filePath;
+        loadProperties();
+    }
+
+    public PropertiesService() {
+        this("src/main/java/co/edu/uptc/resources/app.properties");
+        loadProperties();
+    }
+
+    private void loadProperties() {
+        properties = new Properties();
         try (FileInputStream fileInputStream = new FileInputStream(filePath)) {
             properties.load(fileInputStream);
-            value=properties.getProperty(Key);
         } catch (IOException e) {
             System.out.println("Error al leer propiedades: " + e.getMessage());
         }
-        return value;
-    }   
+    }
+
+    public String getKeyValue(String key) {
+        return properties.getProperty(key);
+    }
+
+    public int getIntValue(String key) {
+        String value = properties.getProperty(key);
+        try {
+            return value != null ? Integer.parseInt(value) : 0;
+        } catch (NumberFormatException e) {
+            System.out.println("Error al convertir el valor de la propiedad a entero: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public void reloadProperties() {
+        loadProperties();
+    }
 }
