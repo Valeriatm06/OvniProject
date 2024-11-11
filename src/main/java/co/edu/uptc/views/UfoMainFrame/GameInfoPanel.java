@@ -69,13 +69,20 @@ public class GameInfoPanel extends JPanel {
     private void initSelectionSection(GridBagConstraints gbc) {
         addUfoSelector(gbc);
         
+        JLabel directionKeysLabel = createLabel("Usar las teclas:");
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(directionKeysLabel, gbc);
+        
         addSpeedPanel(gbc, "upArrow", "+ Velocidad");
-    
         addSpeedPanel(gbc, "downArrow", "- Velocidad");
     }
     
+    
     private void addUfoSelector(GridBagConstraints gbc) {
-        JLabel selectLabel = createLabel("Seleccionar OVNI:");
+        JLabel selectLabel = createLabel("Hacer click al OVNI:");
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
@@ -125,14 +132,20 @@ public class GameInfoPanel extends JPanel {
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
-
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+    
+        JLabel trajectoryInstructionsLabel = createLabel("<html><div style='text-align: center;'>Click al OVNI deseado,<br>mantener presionado y<br>dibujar trayectoria con el mouse</div></html>");
+        add(trajectoryInstructionsLabel, gbc);
+        
         showTrajectoryCheckBox = new JCheckBox("Ver trayectoria");
         showTrajectoryCheckBox.setFont(GlobalView.ALL_TEXT_FONT);
         showTrajectoryCheckBox.setForeground(GlobalView.TITLE_TEXT);
         showTrajectoryCheckBox.setOpaque(false);
-
+    
+        gbc.gridy++;
         add(showTrajectoryCheckBox, gbc);
     }
+    
 
     private void initUfoStatus(GridBagConstraints gbc) {
         gbc.gridy++;

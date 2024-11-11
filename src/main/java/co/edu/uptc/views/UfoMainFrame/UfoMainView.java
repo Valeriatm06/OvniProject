@@ -17,6 +17,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     private MainPanel mainPanel;
     private GamePanel gamePanel;
     private OptionsDialog optionsDialog;
+    private GameFinishedDialog gameFinishedDialog;
     private int ufoCount; 
     private int appearanceTime;
     private int speed;
@@ -106,24 +107,28 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         gamePanel.startUfoGame(ufoCount, speed, appearanceTime);
     }
     
-    public void checkGameFinished() {
-        if (presenter.allUfosStopped()) {
+    private void checkGameFinished() {
+        if (presenter.allUfosStopped() && (gameFinishedDialog == null || !gameFinishedDialog.isVisible())) {
             showGameFinishedDialog();
         }
     }
     
     private void showGameFinishedDialog() {
-        GameFinishedDialog gameFinishedDialog = new GameFinishedDialog(this);
-        
-        gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu(gameFinishedDialog));
-        gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame(gameFinishedDialog));
-        
-        gameFinishedDialog.setVisible(true);    
+        if (gameFinishedDialog == null || !gameFinishedDialog.isVisible()) {
+            gameFinishedDialog = new GameFinishedDialog(this);
+    
+            gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu(gameFinishedDialog));
+            gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame(gameFinishedDialog));
+    
+            gameFinishedDialog.setVisible(true);
+        }
     }
     
+    
     private void returnToMainMenu(GameFinishedDialog gameFinishedDialog) {
-        switchToMainPanel();
         gameFinishedDialog.dispose();
+        switchToMainPanel();
+        
     }
     
     private void switchToMainPanel() {
@@ -132,8 +137,8 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
     
     private void restartGame(GameFinishedDialog gameFinishedDialog) {
-        switchToGamePanel();
         gameFinishedDialog.dispose();
+        switchToGamePanel();
         startGame();
     }
     

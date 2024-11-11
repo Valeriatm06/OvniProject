@@ -292,7 +292,7 @@ public class UfoModel implements UfoInterface.Model {
         }
     }
 
-    @Override
+   @Override
     public boolean allUfosStopped() {
         synchronized (ufos) {
             for (Ufo ufo : ufos) {
