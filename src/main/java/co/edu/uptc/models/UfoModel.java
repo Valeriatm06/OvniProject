@@ -298,7 +298,6 @@ public class UfoModel implements UfoInterface.Model {
     @Override
 public boolean allUfosStopped() {
     if (stoppedUfosCount >= presenter.getUfoNumber()) {
-        System.out.println("Todos los OVNIs han parado.");
         return true;
     }
 
