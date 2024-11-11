@@ -47,16 +47,7 @@ public class UfoAreaPanel extends JPanel {
         initKeyListener();
         setFocusable(true); 
         requestFocusInWindow();
-
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-            }
-        });
+        initFocus();
     }
 
     public void setUfos(List<Ufo> ufos) {
@@ -206,6 +197,18 @@ public class UfoAreaPanel extends JPanel {
                     break;
             }
         }
+    }
+
+    private void initFocus(){
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+            }
+        });
     }
     
     private void changeSelectedUfoSpeed(int delta) {

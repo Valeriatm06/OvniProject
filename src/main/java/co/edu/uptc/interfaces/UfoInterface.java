@@ -2,7 +2,6 @@ package co.edu.uptc.interfaces;
 
 import java.awt.Point;
 import java.util.List;
-
 import co.edu.uptc.pojos.Ufo;
 
 public interface UfoInterface {

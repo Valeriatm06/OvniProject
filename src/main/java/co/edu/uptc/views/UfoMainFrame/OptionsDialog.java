@@ -115,14 +115,14 @@ public class OptionsDialog extends JDialog {
         return new String[]{
             "Lenta (" + slowSpeed + ")",
             "Media (" + mediumSpeed + ")",
-            "Rapida (" + fastSpeed + ")"
+            "Rápida (" + fastSpeed + ")"
         };
     }
     
     private int getSpeedFromSelection(String selection) {
         if (selection.contains("Lenta")) return propertiesService.getIntValue("ufoSlowSpeed");
         if (selection.contains("Media")) return propertiesService.getIntValue("ufoMediumSpeed");
-        if (selection.contains("Rapida")) return propertiesService.getIntValue("ufoFastSpeed");
+        if (selection.contains("Rápida")) return propertiesService.getIntValue("ufoFastSpeed");
         return 2; 
     }
     

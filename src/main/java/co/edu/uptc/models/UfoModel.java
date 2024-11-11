@@ -36,20 +36,19 @@ public class UfoModel implements UfoInterface.Model {
         ufos.clear();
         running = true;
         Random random = new Random();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < ufoNumber; i++) {
-                    if (!running) break;
-                    Ufo newUfo = createNewUfo(random, speed);
-                    ufos.add(newUfo);
-                    updateUfosList();
-                    startUfoMovement(newUfo);
-                    sleepBetweenAppearances(appearanceTime);
-                }
-            }
-        });
+        Thread thread = new Thread(() -> createAndMoveUfos(ufoNumber, random, speed, appearanceTime));
         thread.start();
+    }
+
+    private void createAndMoveUfos(int ufoNumber, Random random, double speed, int appearanceTime) {
+        for (int i = 0; i < ufoNumber; i++) {
+            if (!running) break;
+            Ufo newUfo = createNewUfo(random, speed);
+            ufos.add(newUfo);
+            updateUfosList();
+            startUfoMovement(newUfo);
+            sleepBetweenAppearances(appearanceTime);
+        }
     }
 
     private Ufo createNewUfo(Random random, double speed){
@@ -155,16 +154,14 @@ public class UfoModel implements UfoInterface.Model {
         }
     }
 
-    private boolean isOutOfBounds(Point position) {
+    private boolean isOutOfBounds(Point position){
         return position.x <= 0 || position.x >= getAreaWidth() || position.y <= 0 || position.y >= getAreaHeight();
     }
 
-    public int[] checkCollisions() {
+    public int[] checkCollisions(){
         int crashedCount = 0;
         int arrivedCount = 0;
-    
         List<Ufo> toRemove = new ArrayList<>();
-    
         synchronized (ufos) {
             crashedCount += checkOutOfBounds(toRemove);
             crashedCount += checkCollisionsBetweenUfos(toRemove);
@@ -178,7 +175,7 @@ public class UfoModel implements UfoInterface.Model {
         return new int[]{crashedCount, arrivedCount};
     }
     
-    private int checkOutOfBounds(List<Ufo> toRemove) {
+    private int checkOutOfBounds(List<Ufo> toRemove){
         int crashedCount = 0;
         for (Ufo ufo : ufos) {
             if (isOutOfBounds(ufo.getPosition())) {
@@ -191,7 +188,7 @@ public class UfoModel implements UfoInterface.Model {
         return crashedCount;
     }
     
-    private int checkCollisionsBetweenUfos(List<Ufo> toRemove) {
+    private int checkCollisionsBetweenUfos(List<Ufo> toRemove){
         int crashedCount = 0;
         for (Ufo ufo : ufos) {
             for (Ufo other : ufos) {
@@ -214,7 +211,7 @@ public class UfoModel implements UfoInterface.Model {
         return crashedCount;
     }
     
-    private int checkArrivals(List<Ufo> toRemove) {
+    private int checkArrivals(List<Ufo> toRemove){
         int arrivedCount = 0;
         for (Ufo ufo : ufos) {
             if (isInArrivalArea(ufo.getPosition()) && !toRemove.contains(ufo) && !ufo.isStopped()) {
@@ -227,17 +224,17 @@ public class UfoModel implements UfoInterface.Model {
         return arrivedCount;
     }
     
-    private void removeUfos(List<Ufo> toRemove) {
+    private void removeUfos(List<Ufo> toRemove){
         ufos.removeAll(toRemove);
     }
     
-    private void updatePresenter() {
+    private void updatePresenter(){
         presenter.updateScore(totalCrashedCount); 
         presenter.updateArrival(totalArrivedCount); 
         presenter.updateUfos(new ArrayList<>(ufos));
     }
     
-    private boolean areColliding(Ufo ufoOne, Ufo ufoTwo) {
+    private boolean areColliding(Ufo ufoOne, Ufo ufoTwo){
         Point pos1 = ufoOne.getPosition();
         Point pos2 = ufoTwo.getPosition();
         int collisionDistance = 40;
@@ -245,7 +242,7 @@ public class UfoModel implements UfoInterface.Model {
         return distance < collisionDistance;
     }
 
-    public void countMovingUfos() {
+    public void countMovingUfos(){
         int count = 0;
         synchronized (ufos) {
             for (Ufo ufo : ufos) {
@@ -257,17 +254,17 @@ public class UfoModel implements UfoInterface.Model {
         presenter.countMovingUfos(count);
     }
 
-    private boolean isInArrivalArea(Point position) {
+    private boolean isInArrivalArea(Point position){
         return position.x >= getArrivalAreaX() && position.x <= getArrivalAreaX() + getArrivalAreaWidth() &&
                position.y >= getArrivalAreaY() && position.y <= getArrivalAreaY() + getArrivalAreaHeight();
     }
 
-    public Ufo selectUfoAtPosition(int x, int y) {
+    public Ufo selectUfoAtPosition(int x, int y){
         selectedUfo = getUfoAtPosition(x, y);
         return selectedUfo;
     }
     
-    private Ufo getUfoAtPosition(int x, int y) {
+    private Ufo getUfoAtPosition(int x, int y){
         if (ufos != null) {
             for (Ufo ufo : ufos) {
                 Point position = ufo.getPosition();
@@ -279,7 +276,7 @@ public class UfoModel implements UfoInterface.Model {
         return null;
     }
     
-    private boolean isPointInUfo(int x, int y, Point position) {
+    private boolean isPointInUfo(int x, int y, Point position){
         int ufoWidth = getUfoWidth();
         int ufoHeight = getUfoHeight();
         return x >= position.x && x <= position.x + ufoWidth && y >= position.y && y <= position.y + ufoHeight;
@@ -287,7 +284,7 @@ public class UfoModel implements UfoInterface.Model {
     
 
     @Override
-    public void changeSelectedUfoSpeed(int delta) {
+    public void changeSelectedUfoSpeed(int delta){
         if (selectedUfo != null) {
             double newSpeed = Math.max(0, selectedUfo.getSpeed() + delta);
             selectedUfo.setSpeed(newSpeed);
@@ -296,44 +293,44 @@ public class UfoModel implements UfoInterface.Model {
     }
 
     @Override
-    public boolean allUfosStopped() {
+    public boolean allUfosStopped(){
         if (stoppedUfosCount >= presenter.getUfoNumber()) {
             return true;
         }
         return false;
     }
 
-    public void resetGameCounters() {
+    public void resetGameCounters(){
         totalCrashedCount = 0;
         totalArrivedCount = 0;
         stoppedUfosCount = 0;
     }    
 
-    public Ufo getSelectedUfo() {
+    public Ufo getSelectedUfo(){
         return selectedUfo;
     }
 
-    private int getAreaWidth() {
+    private int getAreaWidth(){
         return presenter.areaSize()[0];
     }
 
-    private int getAreaHeight() {
+    private int getAreaHeight(){
         return presenter.areaSize()[1];
     }
 
-    private int getArrivalAreaX() {
+    private int getArrivalAreaX(){
         return presenter.destinationAreaSize()[0];
     }
 
-    private int getArrivalAreaY() {
+    private int getArrivalAreaY(){
         return presenter.destinationAreaSize()[1];
     }
 
-    private int getArrivalAreaWidth() {
+    private int getArrivalAreaWidth(){
         return presenter.destinationAreaSize()[2];
     }
 
-    private int getArrivalAreaHeight() {
+    private int getArrivalAreaHeight(){
         return presenter.destinationAreaSize()[3];
     }
 
@@ -351,12 +348,12 @@ public class UfoModel implements UfoInterface.Model {
     }
 
     @Override
-    public boolean isRunning() {
+    public boolean isRunning(){
         return running;
     }
 
     @Override
-    public List<Ufo> getUfosList() {
+    public List<Ufo> getUfosList(){
         return ufos;
     }
 }
