@@ -105,4 +105,9 @@ public class MainPresenter implements UfoInterface.Presenter{
     public boolean allUfosStopped() {
         return model.allUfosStopped();
     }
+
+    @Override
+    public int getUfoNumber() {
+        return view.getUfoNumber();
+    }
 }

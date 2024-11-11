@@ -20,11 +20,13 @@ public class UfoModel implements UfoInterface.Model {
     private Ufo selectedUfo;
     private int totalCrashedCount;
     private int totalArrivedCount;
+    private int stoppedUfosCount;
 
     public UfoModel(){
         this.ufos = new CopyOnWriteArrayList<>();//Permitir una acceso concurrente a la lista 
         totalCrashedCount = 0;
         totalArrivedCount = 0;
+        stoppedUfosCount = 0;
         this.running = false;
     }
 
@@ -167,6 +169,7 @@ public class UfoModel implements UfoInterface.Model {
             crashedCount += checkOutOfBounds(toRemove);
             crashedCount += checkCollisionsBetweenUfos(toRemove);
             arrivedCount += checkArrivals(toRemove);
+            stoppedUfosCount += toRemove.size();
             removeUfos(toRemove);
         }
         totalCrashedCount += crashedCount;
@@ -292,21 +295,20 @@ public class UfoModel implements UfoInterface.Model {
         }
     }
 
-   @Override
-    public boolean allUfosStopped() {
-        synchronized (ufos) {
-            for (Ufo ufo : ufos) {
-                if (ufo.isMoving()) {
-                    return false;
-                }
-            }
-        }
+    @Override
+public boolean allUfosStopped() {
+    if (stoppedUfosCount >= presenter.getUfoNumber()) {
+        System.out.println("Todos los OVNIs han parado.");
         return true;
     }
+
+    return false;
+}
 
     public void resetGameCounters() {
         totalCrashedCount = 0;
         totalArrivedCount = 0;
+        stoppedUfosCount = 0;
     }    
 
     public Ufo getSelectedUfo() {

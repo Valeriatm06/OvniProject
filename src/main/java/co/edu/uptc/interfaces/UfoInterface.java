@@ -66,6 +66,8 @@ public interface UfoInterface {
         public void startUfoMovement(Ufo ufo);
 
         public boolean allUfosStopped();
+
+        public int getUfoNumber();
     }
 
     public interface View {
@@ -88,5 +90,7 @@ public interface UfoInterface {
         public void updateMovingCount(int crashedCount);
 
         public void refresh();
+
+        public int getUfoNumber();
     }
 }

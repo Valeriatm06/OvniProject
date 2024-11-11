@@ -102,7 +102,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
 
     public void startGame() {
-        resetCountersInView();  
+        resetCountersInView();
         gamePanel.setVisible(true);
         gamePanel.startUfoGame(ufoCount, speed, appearanceTime);
     }
@@ -112,6 +112,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
             showGameFinishedDialog();
         }
     }
+    
     
     private void showGameFinishedDialog() {
         if (gameFinishedDialog == null || !gameFinishedDialog.isVisible()) {
@@ -126,9 +127,8 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     
     
     private void returnToMainMenu(GameFinishedDialog gameFinishedDialog) {
-        gameFinishedDialog.dispose();
         switchToMainPanel();
-        
+        gameFinishedDialog.dispose();
     }
     
     private void switchToMainPanel() {
@@ -137,8 +137,8 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
     
     private void restartGame(GameFinishedDialog gameFinishedDialog) {
-        gameFinishedDialog.dispose();
         switchToGamePanel();
+        gameFinishedDialog.dispose();
         startGame();
     }
     
@@ -149,7 +149,12 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         gamePanel.getInfoArea().upDateMovingUfoCount(0);
     }
     
-    
+    @Override
+    public int getUfoNumber(){
+        System.out.println(optionsDialog.getUfoCount());
+        return optionsDialog.getUfoCount();
+    }
+
     @Override
     public void updateUfoDisplay(List<Ufo> ufos) {
         gamePanel.updateUfos(ufos);
