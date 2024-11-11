@@ -23,7 +23,7 @@ public class UfoModel implements UfoInterface.Model {
     private int stoppedUfosCount;
 
     public UfoModel(){
-        this.ufos = new CopyOnWriteArrayList<>();//Permitir una acceso concurrente a la lista 
+        this.ufos = new CopyOnWriteArrayList<>();
         totalCrashedCount = 0;
         totalArrivedCount = 0;
         stoppedUfosCount = 0;
@@ -296,13 +296,12 @@ public class UfoModel implements UfoInterface.Model {
     }
 
     @Override
-public boolean allUfosStopped() {
-    if (stoppedUfosCount >= presenter.getUfoNumber()) {
-        return true;
+    public boolean allUfosStopped() {
+        if (stoppedUfosCount >= presenter.getUfoNumber()) {
+            return true;
+        }
+        return false;
     }
-
-    return false;
-}
 
     public void resetGameCounters() {
         totalCrashedCount = 0;

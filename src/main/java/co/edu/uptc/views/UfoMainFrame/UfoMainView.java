@@ -1,6 +1,8 @@
 package co.edu.uptc.views.UfoMainFrame;
 
 import javax.swing.JFrame;
+import javax.swing.SwingWorker;
+
 import java.awt.CardLayout;
 import java.util.List;
 
@@ -108,27 +110,38 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     }
     
     private void checkGameFinished() {
-        if (presenter.allUfosStopped() && (gameFinishedDialog == null || !gameFinishedDialog.isVisible())) {
-            showGameFinishedDialog();
-        }
+    if (presenter.allUfosStopped() && (gameFinishedDialog == null || !gameFinishedDialog.isVisible())) {
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                Thread.sleep(500); 
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                showGameFinishedDialog();
+            }
+        }.execute();
     }
-    
-    
-    private void showGameFinishedDialog() {
-        if (gameFinishedDialog == null || !gameFinishedDialog.isVisible()) {
-            gameFinishedDialog = new GameFinishedDialog(this);
-    
-            gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu(gameFinishedDialog));
-            gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame(gameFinishedDialog));
-    
-            gameFinishedDialog.setVisible(true);
-        }
+}
+
+private void showGameFinishedDialog() {
+    if (gameFinishedDialog == null || !gameFinishedDialog.isVisible()) {
+        gameFinishedDialog = new GameFinishedDialog(this);
+
+        gameFinishedDialog.getMenuButton().addActionListener(e -> returnToMainMenu());
+        gameFinishedDialog.getPlayButton().addActionListener(e -> restartGame());
+
+        gameFinishedDialog.setVisible(true);
     }
+}
+
     
     
-    private void returnToMainMenu(GameFinishedDialog gameFinishedDialog) {
+    private void returnToMainMenu() {
         switchToMainPanel();
-        gameFinishedDialog.dispose();
+        this.gameFinishedDialog.dispose();
     }
     
     private void switchToMainPanel() {
@@ -136,9 +149,9 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         layout.show(getContentPane(), "MainPanel");
     }
     
-    private void restartGame(GameFinishedDialog gameFinishedDialog) {
+    private void restartGame() {
         switchToGamePanel();
-        gameFinishedDialog.dispose();
+        this.gameFinishedDialog.dispose();
         startGame();
     }
     
@@ -151,7 +164,6 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     
     @Override
     public int getUfoNumber(){
-        System.out.println(optionsDialog.getUfoCount());
         return optionsDialog.getUfoCount();
     }
 
