@@ -133,9 +133,6 @@ public class GameInfoPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-    
-        JLabel trajectoryInstructionsLabel = createLabel("<html><div style='text-align: center;'>Click al OVNI deseado,<br>mantener presionado y<br>dibujar trayectoria con el mouse</div></html>");
-        add(trajectoryInstructionsLabel, gbc);
         
         showTrajectoryCheckBox = new JCheckBox("Ver trayectoria");
         showTrajectoryCheckBox.setFont(GlobalView.ALL_TEXT_FONT);

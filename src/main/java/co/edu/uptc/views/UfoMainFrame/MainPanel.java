@@ -21,6 +21,7 @@ public class MainPanel extends JPanel {
     private DesignButton playButton;
     private DesignButton optionsButton;
     private DesignButton exitButton;
+    private DesignButton howToPlayButton;
 
     public MainPanel() {
         propertiesService = new PropertiesService();
@@ -55,15 +56,17 @@ public class MainPanel extends JPanel {
 
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(40, 50, 50, 50);
+        gbc.anchor = GridBagConstraints.CENTER; 
 
         initPlayButton();
         initOptionsButton();
         initExitButton();
+        initHowToPlayButton();
 
         backgroundPanel.add(buttonPanel, BorderLayout.CENTER);
     }
 
-    public void initPlayButton(){
+    public void initPlayButton() {
         playButton = new DesignButton("JUGAR", true);
         playButton.setIcon(new ImageIcon(propertiesService.getKeyValue("playPath")));
         playButton.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -73,10 +76,11 @@ public class MainPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridwidth = 1;
         buttonPanel.add(playButton, gbc);
     }
 
-    public void initOptionsButton(){
+    public void initOptionsButton() {
         optionsButton = new DesignButton("OPCIONES", true);
         optionsButton.setIcon(new ImageIcon(propertiesService.getKeyValue("optionsPath")));
         optionsButton.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -86,10 +90,11 @@ public class MainPanel extends JPanel {
 
         gbc.gridx = 1;
         gbc.gridy = 0;
+        gbc.gridwidth = 1;  
         buttonPanel.add(optionsButton, gbc);
     }
 
-    public void initExitButton(){
+    public void initExitButton() {
         exitButton = new DesignButton("SALIR", true);
         exitButton.setIcon(new ImageIcon(propertiesService.getKeyValue("exitPath")));
         exitButton.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -97,9 +102,23 @@ public class MainPanel extends JPanel {
         exitButton.setBackground(GlobalView.PRIMARY_BTN_BACKGROUND);
         exitButton.setForeground(GlobalView.ALL_TEXT);
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2; 
+        gbc.gridx = 1;
+        gbc.gridy = 1; 
+        gbc.gridwidth = 1;  
         buttonPanel.add(exitButton, gbc);
+    }
+
+    public void initHowToPlayButton() {
+        howToPlayButton = new DesignButton("INSTRUCCIONES", true);
+        howToPlayButton.setIcon(new ImageIcon(propertiesService.getKeyValue("howToPlayPath")));
+        howToPlayButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        howToPlayButton.setVerticalTextPosition(SwingConstants.CENTER);
+        howToPlayButton.setBackground(GlobalView.PRIMARY_BTN_BACKGROUND);
+        howToPlayButton.setForeground(GlobalView.ALL_TEXT);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;  
+        gbc.gridwidth = 1; 
+        buttonPanel.add(howToPlayButton, gbc);
     }
 }

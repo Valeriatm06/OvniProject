@@ -20,6 +20,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
     private GamePanel gamePanel;
     private OptionsDialog optionsDialog;
     private GameFinishedDialog gameFinishedDialog;
+    private HowToPlayDialog howToPlayDialog;
     private int ufoCount; 
     private int appearanceTime;
     private int speed;
@@ -29,6 +30,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         propertiesService = new PropertiesService();
         initValues();
         optionsDialog = new OptionsDialog(this, ufoCount, appearanceTime, speed, ufoType);
+        howToPlayDialog = new HowToPlayDialog(this);
         initFrame();
         initMainPanel();
         initGamePanel();
@@ -68,6 +70,7 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
         mainPanel.getOptionsButton().addActionListener(e -> showOptionsDialog());
         mainPanel.getExitButton().addActionListener(e -> exitGame());
         mainPanel.getPlayButton().addActionListener(e -> startGameFromMainPanel());
+        mainPanel.getHowToPlayButton().addActionListener(e -> showHowToPlayDialog());
     }
     
     private void exitGame() {
@@ -90,6 +93,14 @@ public class UfoMainView extends JFrame implements UfoInterface.View{
             optionsDialog = new OptionsDialog(this, ufoCount, appearanceTime, speed, ufoType);
         }
         optionsDialog.setVisible(true);
+        
+    }
+
+    private void showHowToPlayDialog() {
+        if (howToPlayDialog == null) {
+            howToPlayDialog = new HowToPlayDialog(this);
+        }
+        howToPlayDialog.setVisible(true);
         
     }
     
