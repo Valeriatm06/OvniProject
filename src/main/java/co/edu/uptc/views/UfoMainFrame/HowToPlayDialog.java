@@ -31,7 +31,7 @@ public class HowToPlayDialog extends JDialog {
     }
 
     public void initTitle(){
-        titleLabel = new JLabel("Instrucciones");
+        titleLabel = new JLabel("INSTRUCCIONES");
         titleLabel.setFont(GlobalView.TITLE_FONT_MEDIUM);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setForeground(GlobalView.TITLE_TEXT); 
